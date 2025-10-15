@@ -5,40 +5,42 @@ def load_data(file_path):
     with open(file_path, "r") as handle:
         return json.load(handle)
 
+# Daten laden
 animal_data = load_data("animals_data.json")
-#print(animals_data)
+
 
 output = ""
-#iterate through the data loaded from the JSON file and print:
+
 for animal in animal_data:
-    chars = animal.get("characteristics") or {}
-    name = animal.get("name")
-    diet = chars.get("diet")
-    locations = animal.get("locations")
-    first_location = locations[0] if isinstance(locations, list) and locations else None
-    type_ = chars.get("type")
+    output += '<li class="cards__item">\n'
 
-    if name is not None:
-        output += f"Name: {name}\n"
-    if diet is not None:
-        output += f"Diet: {diet}\n"
-    if first_location is not None:
-        output += f"Location: {first_location}\n"
-    if type_ is not None:
-        output += f"Type: {type_}\n"
+    if "name" in animal:
+        output += f"Name: {animal['name']}<br/>\n"
 
-    output += "\n"
+    if "characteristics" in animal and "diet" in animal["characteristics"]:
+        output += f"Diet: {animal['characteristics']['diet']}<br/>\n"
 
-print(output[:400])
+    if "locations" in animal and animal["locations"]:
+        output += f"Location: {animal['locations'][0]}<br/>\n"
+
+    if "characteristics" in animal and "type" in animal["characteristics"]:
+        output += f"Type: {animal['characteristics']['type']}<br/>\n"
+
+    output += "</li>\n"
 
 
-with open("animals_template.html", "r") as f:
+print(output)
+print("li-count:", output.count('<li class="cards__item">'))
+
+
+with open("animals_template.html", "r", encoding="utf-8") as f:
     template_html = f.read()
 
 final_html = template_html.replace("__REPLACE_ANIMALS_INFO__", output)
 
-
 with open("animals.html", "w", encoding="utf-8") as f:
     f.write(final_html)
+
+print("li-count:", output.count('<li class="cards__item">'))
 print("wrote animals.html")
 
